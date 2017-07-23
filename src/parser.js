@@ -126,7 +126,7 @@ module.exports = function parse(source) {
 
 				case "text":
 
-					if (character != quote) {
+					if (character != quote && character != undefined) {
 
 						// Если встречаем обратный слеш "\"", то вместо него
 						// подставляем следующий символ. Благодаря этому
@@ -145,6 +145,16 @@ module.exports = function parse(source) {
 						continue
 
 					} else {
+
+/*
+						Ошибка, когда буквы кончились а кавычки не закрылись
+
+						Пока отключена, считается что строка просто закончилась
+
+						if (character == undefined) {
+							throw("error: unexpected end of string")
+						}
+ */
 
 						// Конец подстроки текста
 
