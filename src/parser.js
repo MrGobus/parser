@@ -128,8 +128,20 @@ module.exports = function parse(source) {
 
 					if (character != quote) {
 
-						word += character
-						position++
+						// Если встречаем обратный слеш "\"", то вместо него
+						// подставляем следующий символ. Благодаря этому
+						// становится возможно использовать знак кавычки в тексте
+						// "\"". Для того чтобы использовать в тексте обратный слеш
+						// пишем его два раза "\\"
+
+						if (character == "\\") {
+							word += source[position + 1]
+							position += 2
+						} else {
+							word += character
+							position++
+						}
+
 						continue
 
 					} else {
