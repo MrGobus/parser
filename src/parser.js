@@ -77,6 +77,28 @@ module.exports = function parse(source) {
 
 						hasDot = false
 
+						// Если число заканчиваетс на точку,
+						// то интерпритируем ее как отдельный символ
+
+						if (word[word.length - 1] == ".") {
+
+							result.push({
+								type: "number",
+								value: parseFloat(word.slice(0, -1))
+							})
+
+							result.push({
+								type: "sign",
+								value: "."
+							})
+
+							word = ""
+							type = undefined
+
+							continue
+
+						}
+
 						// Если после числа сразу идут символы
 						// меняем тип на 'name'. Таким образом станет
 						// возможно начинать имена перемнных с числовых символов
@@ -168,6 +190,24 @@ module.exports = function parse(source) {
 						continue
 
 					} else {
+
+						// Если смвол оканчивается на "+" или "-", и далее следует
+						// числовое значение, то считаем "+" или "-" частью числа
+
+						if (isSign(word[word.length - 1]) && isDigit(character)) {
+
+							result.push({
+								type: "sign",
+								value: word.slice(0, -1)
+							})
+
+							word = ""
+							type = undefined
+
+							position -= 1
+							continue
+
+						}
 
 						// Конец подстроки
 
