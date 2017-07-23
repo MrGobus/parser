@@ -26,6 +26,7 @@ module.exports = function parse(source) {
 	let word = "" // Аккумулятор подстроки
 	let quote = undefined // Сюда сохраняем открывающую кавычку
 	let hasDot = false // Говорит о том что в подстроке числа уже есть точка
+	let startPosition = 0 // Сюда запоминаем начало подстроки
 
 	while (position <= source.length) {
 
@@ -52,7 +53,8 @@ module.exports = function parse(source) {
 
 						result.push({
 							type: type,
-							value: word
+							value: word,
+							position: startPosition
 						})
 
 						word = ""
@@ -85,12 +87,14 @@ module.exports = function parse(source) {
 
 							result.push({
 								type: "number",
-								value: parseFloat(word.slice(0, -1))
+								value: parseFloat(word.slice(0, -1)),
+								position: startPosition
 							})
 
 							result.push({
 								type: "sign",
-								value: "."
+								value: ".",
+								position: startPosition + word.length - 1
 							})
 
 							word = ""
@@ -104,7 +108,8 @@ module.exports = function parse(source) {
 
 						result.push({
 							type: "number",
-							value: parseFloat(word)
+							value: parseFloat(word),
+							position: startPosition
 						})
 
 						word = ""
@@ -161,7 +166,8 @@ module.exports = function parse(source) {
 
 						result.push({
 							type: type,
-							value: word
+							value: word,
+							position: startPosition
 						})
 
 						word = ""
@@ -190,7 +196,8 @@ module.exports = function parse(source) {
 
 							result.push({
 								type: "sign",
-								value: word.slice(0, -1)
+								value: word.slice(0, -1),
+								position: startPosition
 							})
 
 							word = ""
@@ -205,7 +212,8 @@ module.exports = function parse(source) {
 
 						result.push({
 							type: "sign",
-							value: word
+							value: word,
+							position: startPosition
 						})
 
 						word = ""
@@ -217,59 +225,67 @@ module.exports = function parse(source) {
 
 			}
 
-		}
+		} else {
 
-		// Ищем начало подстроки
+			// Ищем начало подстроки
 
-		if (isSymbol(character)) {
-			word = character
-			type = 'name'
-		} else
+			if (isSymbol(character)) {
+				startPosition = position
+				word = character
+				type = 'name'
+			} else
 
-		// Цифры могу начинаться со знака "+" или "-"
-		// Если после знака в начале строки следует цифра то это число
-		// Также это число если за знаком следует точка за которой следует числовой символ
+			// Цифры могу начинаться со знака "+" или "-"
+			// Если после знака в начале строки следует цифра то это число
+			// Также это число если за знаком следует точка за которой следует числовой символ
 
-		if (isSign(character) && (isDigit(source[position + 1]) || (source[position + 1] == "." && isDigit(source[position + 2])))) {
-			word = character
-			type = 'number'
-		} else
+			if (isSign(character) && (isDigit(source[position + 1]) || (source[position + 1] == "." && isDigit(source[position + 2])))) {
+				startPosition = position
+				word = character
+				type = 'number'
+			} else
 
-		// Число
-		// Может начинаться на '.', что означает что далее следует дробная часть
+			// Число
+			// Может начинаться на '.', что означает что далее следует дробная часть
 
-		if (isDigit(character) || (character == "." && isDigit(source[position + 1]))) {
-			if (character == ".") {
-				hasDot = true
+			if (isDigit(character) || (character == "." && isDigit(source[position + 1]))) {
+				if (character == ".") {
+					hasDot = true
+				}
+				startPosition = position
+				word = character
+				type = 'number'
+			} else
+
+			// Одиночный символ
+
+			if (isSingle(character)) {
+				result.push({
+					type: "sign",
+					value: character,
+					position: position
+				})
+			} else
+
+			// Мульти символы
+
+			if (isMulti(character)) {
+				startPosition = position
+				word = character
+				type = 'multi'
+			} else
+
+			// Строка в кавычках
+
+			if (isQuote(character)) {
+				startPosition = position
+				type = "text"
+				quote = character
 			}
-			word = character
-			type = 'number'
-		} else
 
-		// Одиночный символ
+			position++
 
-		if (isSingle(character)) {
-			result.push({
-				type: "sign",
-				value: character
-			})
-		} else
-
-		// Мульти символы
-
-		if (isMulti(character)) {
-			word = character
-			type = 'multi'
-		} else
-
-		// Строка в кавычках
-
-		if (isQuote(character)) {
-			type = "text"
-			quote = character
 		}
-
-		position++
 
 	}
 
