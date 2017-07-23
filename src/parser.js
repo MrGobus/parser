@@ -99,45 +99,6 @@ module.exports = function parse(source) {
 
 						}
 
-/*
-
-						// Если после числа сразу идут символы
-						// меняем тип на 'name'. Таким образом станет
-						// возможно начинать имена перемнных с числовых символов
-						// например: "666cows666"
-
-						if (isSymbol(character)) {
-
-							// В подстроке числа может содержаться точка (не более одной)
-							// точку и то, что ранее сохраняем как отдельные объекты
-
-							let w = word.split(".")
-							if (w.length > 1) {
-
-								if (w[0]) {
-									result.push({
-										type: "number",
-										value: parseFloat(w[0])
-									})
-								}
-
-								result.push({
-									type: "sign",
-									value: "."
-								})
-
-								word = w[1]
-							}
-
-							type = "name"
-							word += character
-							position++
-							continue
-
-						}
-
-*/
-
 						// Конец подстроки числа
 
 						result.push({
