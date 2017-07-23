@@ -99,6 +99,8 @@ module.exports = function parse(source) {
 
 						}
 
+/*
+
 						// Если после числа сразу идут символы
 						// меняем тип на 'name'. Таким образом станет
 						// возможно начинать имена перемнных с числовых символов
@@ -134,6 +136,8 @@ module.exports = function parse(source) {
 
 						}
 
+*/
+
 						// Конец подстроки числа
 
 						result.push({
@@ -143,6 +147,10 @@ module.exports = function parse(source) {
 
 						word = ""
 						type = undefined
+
+						if (isSymbol(character)) {
+							continue
+						}
 
 						// Если мы встретили второую точку, то начинаем чтение
 						// следующей подстроки с этого места
