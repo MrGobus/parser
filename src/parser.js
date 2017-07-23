@@ -79,6 +79,7 @@ module.exports = function parse(source) {
 					} else {
 
 						hasDot = false
+						type = undefined
 
 						// Если число заканчиваетс на точку,
 						// то интерпритируем ее как отдельный символ
@@ -98,8 +99,6 @@ module.exports = function parse(source) {
 							})
 
 							word = ""
-							type = undefined
-
 							continue
 
 						}
@@ -113,7 +112,6 @@ module.exports = function parse(source) {
 						})
 
 						word = ""
-						type = undefined
 
 						if (isSymbol(character)) {
 							continue
@@ -189,6 +187,8 @@ module.exports = function parse(source) {
 
 					} else {
 
+						type = undefined
+
 						// Если смвол оканчивается на "+" или "-", и далее следует
 						// числовое значение, то считаем "+" или "-" частью числа
 
@@ -201,8 +201,6 @@ module.exports = function parse(source) {
 							})
 
 							word = ""
-							type = undefined
-
 							position -= 1
 							continue
 
@@ -217,7 +215,6 @@ module.exports = function parse(source) {
 						})
 
 						word = ""
-						type = undefined
 
 					}
 
